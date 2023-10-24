@@ -10,7 +10,6 @@ import routes from "./Routes";
 
 // DB configuration
 import "./config/db"
-import router from "./Routes";
 
 // Middleware to set routes
 app.get("/", (req:Request, res:Response)=>{
