@@ -2,14 +2,14 @@
   "name": "student_management_system",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/server.js",
+  "main": "./src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev src/server.ts",
     "build": "rimraf dist && tsc",
     "ts.check":"tsc --project tsconfig.json",
     "add-build":"git add dist",
-    "start": "nodemon src/server.ts"
+    "start": "nodemon dist/server.js"
   },
   "keywords": [],
   "pre-commit":[
