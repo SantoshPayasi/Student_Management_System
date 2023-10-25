@@ -7,8 +7,8 @@ APIs base url : https://student-management-system-blond.vercel.app
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
- `URI` mongodb+srv://spayasi78:5MZPpdJWUFgsrmql@studentdata.dvezysv.mongodb.net/STUDENT_MANAGEMENT?retryWrites=true&w=majority PORT = 3001
+To run this project, you will need to add the following environment variables to your .env file .
+`URI` mongodb+srv://spayasi78:5MZPpdJWUFgsrmql@studentdata.dvezysv.mongodb.net/STUDENT_MANAGEMENT?retryWrites=true&w=majority PORT = 3001
 
 `PORT` 3001
 
