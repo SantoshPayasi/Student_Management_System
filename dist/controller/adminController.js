@@ -16,7 +16,6 @@ const adminModel_1 = __importDefault(require("../models/adminModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const childrenModel_1 = __importDefault(require("../models/childrenModel"));
 const taskModel_1 = __importDefault(require("../models/taskModel"));
-// import nanoid from "nanoid"
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const GlobalMiddleware_1 = require("../middlewares/GlobalMiddleware");
 const adminController = {
@@ -58,7 +57,7 @@ const adminController = {
                 });
             }
             else {
-                const code = yield generateString(10);
+                const code = yield (0, GlobalMiddleware_1.generateString)(10);
                 const Newuser = new adminModel_1.default({
                     name: name,
                     email: email,
@@ -87,24 +86,24 @@ const adminController = {
         }
     }),
     loginAdmin: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { email, passsword } = req.body;
+        const { email, password } = req.body;
         try {
             const user = yield adminModel_1.default.findOne({ email: email.trim() });
             if (user) {
-                const isValidPassword = yield bcrypt_1.default.compare(passsword, user.password);
+                const isValidPassword = yield bcrypt_1.default.compare(password, user.password);
                 if (isValidPassword) {
                     const accessCode = {
-                        code: generateString(10),
+                        code: (0, GlobalMiddleware_1.generateString)(10),
                         updateDate: String(new Date()),
                     };
-                    adminModel_1.default.findOneAndUpdate({ email: email.trim() }, { accessCode: accessCode })
-                        .select("-password")
+                    console.log(accessCode.code);
+                    adminModel_1.default.findOneAndUpdate({ email: email.trim() }, { accessCode: accessCode }).select("-password")
                         .then((data) => {
                         if (data) {
                             return res.status(200).send({
                                 msg: "Logged in successfully",
                                 Nate: "Code is valid for next 10 minutes to assign tasks to children",
-                                data: data,
+                                data: accessCode,
                             });
                         }
                     });
@@ -184,7 +183,7 @@ const adminController = {
         try {
             const { task } = req.body;
             const { studentId, accessCode } = req.params;
-            if (task != null && studentId != null && accessCode != null) {
+            if (task != null && task.task != null && task.dueDate != null && studentId != null && accessCode != null) {
                 //  const isactiveaccessCode = AdminSchema.findOne({"accessCode.code":accessCode})
                 const generatedDetails = yield (0, GlobalMiddleware_1.checkcodeisActive)(accessCode);
                 if (generatedDetails == "Invalid code") {
@@ -193,7 +192,7 @@ const adminController = {
                         Note: "Invalid access code ",
                     });
                 }
-                else if (generatedDetails.isvalidCode == false) {
+                else if (generatedDetails.isValidCode == false) {
                     return res.status(400).send({
                         msg: "Code is expired",
                         Note: "Please login to get new access code",
@@ -207,6 +206,7 @@ const adminController = {
                             const Newtask = new taskModel_1.default({
                                 task: task.task,
                                 assignedBy: generatedDetails.adminId,
+                                dueDate: task.dueDate
                             });
                             Newtask.save().then((data) => {
                                 childrenModel_1.default
@@ -241,13 +241,4 @@ const adminController = {
         }
     }),
 };
-function generateString(length) {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = " ";
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
 exports.default = adminController;

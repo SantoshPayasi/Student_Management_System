@@ -38,7 +38,7 @@ export const checkcodeisActive=async (code:string)=>{
         const admin = await Adminschema.findOne({"accessCode.code":code})
         if(admin){
         const date = admin.accessCode.updateDate
-         const isvalidCode = (new Date().getTime()-new Date(date).getTime()) > (10*60*1000) ? false : true 
+         const isvalidCode = (new Date().getTime()-new Date(date).getTime()) < (10*60*1000) ? true : false 
         //  console.log(new Date().getTime()-new Date(date).getTime())
         //  console.log(isvalidCode)
         return {isValidCode: isvalidCode , adminId:admin._id}
@@ -48,3 +48,16 @@ export const checkcodeisActive=async (code:string)=>{
         return error
     }
 }
+
+
+export function generateString(length: number) {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+  
+    return result;
+  }

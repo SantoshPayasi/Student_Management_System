@@ -21,6 +21,7 @@ export interface Admin extends Document, basicDetails, AccessCode{
 export interface Children extends Document, basicDetails{
     basicDetails:basicDetails,
     department:string,
+    tasks:[any]
     _doc:object
 }
 

@@ -1,15 +1,14 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import AdminSchema from "../models/adminModel";
 import mongoose from "mongoose";
 import childrenModel from "../models/childrenModel";
 import taskSchema from "../models/taskModel";
-// import nanoid from "nanoid"
 import bcrypt from "bcrypt";
 import { Children } from "../config/interfaces";
-import { rmSync } from "fs";
 import {
   checkcodeisActive,
   isChilldExist,
+  generateString
 } from "../middlewares/GlobalMiddleware";
 const adminController = {
   testing: (req: Request, res: Response) => {
@@ -75,27 +74,27 @@ const adminController = {
     }
   },
   loginAdmin: async (req: Request, res: Response) => {
-    const { email, passsword } = req.body;
+    const { email, password } = req.body;
     try {
       const user = await AdminSchema.findOne({ email: email.trim() });
       if (user) {
-        const isValidPassword = await bcrypt.compare(passsword, user.password);
+        const isValidPassword = await bcrypt.compare(password, user.password);
         if (isValidPassword) {
           const accessCode = {
-            code: generateString(10),
+            code:generateString(10),
             updateDate: String(new Date()),
           };
+          console.log(accessCode.code)
           AdminSchema.findOneAndUpdate(
             { email: email.trim() },
             { accessCode: accessCode }
-          )
-            .select("-password")
+          ).select("-password")
             .then((data) => {
               if (data) {
                 return res.status(200).send({
                   msg: "Logged in successfully",
                   Nate: "Code is valid for next 10 minutes to assign tasks to children",
-                  data: data,
+                  data: accessCode,
                 });
               }
             });
@@ -174,7 +173,7 @@ const adminController = {
     try {
       const { task } = req.body;
       const { studentId, accessCode } = req.params;
-      if (task != null && studentId != null && accessCode != null) {
+      if (task != null && task.task!=null && task.dueDate!=null && studentId != null && accessCode != null) {
         //  const isactiveaccessCode = AdminSchema.findOne({"accessCode.code":accessCode})
         const generatedDetails = await checkcodeisActive(accessCode);
         if (generatedDetails == "Invalid code") {
@@ -182,12 +181,14 @@ const adminController = {
             msg: "Bad request",
             Note: "Invalid access code ",
           });
-        } else if (generatedDetails.isvalidCode == false) {
+        } 
+       else if (generatedDetails.isValidCode == false) {
           return res.status(400).send({
             msg: "Code is expired",
             Note: "Please login to get new access code",
           });
-        } else {
+        }
+        else {
           const isValidChildId = mongoose.isValidObjectId(studentId);
           if (isValidChildId) {
             const isChildExist = await isChilldExist(studentId);
@@ -195,6 +196,7 @@ const adminController = {
               const Newtask = new taskSchema({
                 task: task.task,
                 assignedBy: generatedDetails.adminId,
+                dueDate:task.dueDate
               });
 
               Newtask.save().then((data) => {
@@ -231,16 +233,6 @@ const adminController = {
   },
 };
 
-function generateString(length: number) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = " ";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
 
-  return result;
-}
 
 export default adminController;

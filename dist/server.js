@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
+const TaskStatusCheckCronJob_1 = require("./config/TaskStatusCheckCronJob");
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 app.use((0, cors_1.default)());
@@ -37,6 +38,8 @@ app.use((0, express_1.urlencoded)({ extended: true }));
 const Routes_1 = __importDefault(require("./Routes"));
 // DB configuration
 require("./config/db");
+// Schedule cron job
+(0, TaskStatusCheckCronJob_1.updateTaskStatus)();
 // Middleware to set routes
 app.get("/", (req, res) => {
     res.status(200).send({
@@ -44,7 +47,7 @@ app.get("/", (req, res) => {
     });
 });
 app.use("/admin", Routes_1.default.AdminRoutes);
-app.use("/chilldren", Routes_1.default.childrenRoutes);
+app.use("/children", Routes_1.default.childrenRoutes);
 // app.use("/", router)
 // Server initilization
 const port = process.env.PORT || 3001;

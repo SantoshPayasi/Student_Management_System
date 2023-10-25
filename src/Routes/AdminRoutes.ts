@@ -11,8 +11,9 @@ Router.post("/createAdmin", emailValidator, adminController.createAdmin)
 // Endpoint to get all admins
 Router.get("/getAlladminsdetail", adminController.getAlladmins)
 
+// Login with admin details
+Router.post("/login", adminController.loginAdmin)
 // Add children in database
-
 Router.post("/addChildren/:adminId", emailValidator, adminController.addchildren)
 
 // Add task to the children

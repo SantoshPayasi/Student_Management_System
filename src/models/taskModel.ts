@@ -16,7 +16,7 @@ const taskModel = new mongoose.Schema(
         },
     isOverDue:{
         type:Boolean,
-         default:true
+         default:false
         },
     assignedBy:{
         type:mongoose.Types.ObjectId,

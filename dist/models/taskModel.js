@@ -19,7 +19,7 @@ const taskModel = new mongoose_1.default.Schema({
     },
     isOverDue: {
         type: Boolean,
-        default: true
+        default: false
     },
     assignedBy: {
         type: mongoose_1.default.Types.ObjectId,

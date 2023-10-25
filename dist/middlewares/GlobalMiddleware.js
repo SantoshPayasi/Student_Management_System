@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkcodeisActive = exports.isChilldExist = exports.emailValidator = void 0;
+exports.generateString = exports.checkcodeisActive = exports.isChilldExist = exports.emailValidator = void 0;
 const childrenModel_1 = __importDefault(require("../models/childrenModel"));
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const emailValidator = (req, res, next) => {
@@ -50,7 +50,7 @@ const checkcodeisActive = (code) => __awaiter(void 0, void 0, void 0, function* 
         const admin = yield adminModel_1.default.findOne({ "accessCode.code": code });
         if (admin) {
             const date = admin.accessCode.updateDate;
-            const isvalidCode = (new Date().getTime() - new Date(date).getTime()) > (10 * 60 * 1000) ? false : true;
+            const isvalidCode = (new Date().getTime() - new Date(date).getTime()) < (10 * 60 * 1000) ? true : false;
             //  console.log(new Date().getTime()-new Date(date).getTime())
             //  console.log(isvalidCode)
             return { isValidCode: isvalidCode, adminId: admin._id };
@@ -62,3 +62,13 @@ const checkcodeisActive = (code) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.checkcodeisActive = checkcodeisActive;
+function generateString(length) {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+exports.generateString = generateString;
